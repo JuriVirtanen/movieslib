@@ -70,7 +70,8 @@ def search(lista, search_word): # nie jestem pewny czy o coś takiego chodziło
             print(video)
 
 
-def ile_odcinkow(lista, title, ile=0):
+def ile_odcinkow(lista, title):
+    ile = 0
     for video in lista:
         if title in str(video):
             ile += 1
