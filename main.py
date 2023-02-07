@@ -24,7 +24,7 @@ class Movie:
     
 
     def add_view(self, how_much):
-        self.views = self.views + how_much
+        self.views += how_much
 
 
 class Series(Movie):
@@ -44,16 +44,16 @@ def generate_views(lista):
 
 
 def magic_function(lista):
-    for ile_razy in range(10):
+    for _ in range(10):
         generate_views(lista)
 
 
 def get_movies(lista):
     only_movies = []
     for video in lista:
-        if isinstance(video, Movie):
+        if not isinstance(video, Series):
             only_movies.append(video)
-    return sorted(only_movies, key=str)
+    return sorted(only_movies, key= lambda a: str(a))
     
 
 def get_series(lista):
@@ -61,51 +61,39 @@ def get_series(lista):
     for video in lista:
         if isinstance(video, Series):
             only_series.append(video)
-    return sorted(only_series, key=str)
+    return sorted(only_series, key= lambda a: str(a))
 
 
-def search(lista, search_word): # nie jestem pewny czy o coś takiego chodziło
+def search(lista, search_word):
     for video in lista:
-        if search_word in str(video):
+        if search_word in video.title:
             print(video)
 
 
 def ile_odcinkow(lista, title):
     ile = 0
     for video in lista:
-        if title in str(video):
+        if title in video.title:
             ile += 1
     return ile
 
 
-def top_titles(lista, topx, content_type="all"):
+def top_titles(lista, topx, content_type):
     if content_type == "all":
-        top = sorted(lista, key=lambda video: video.views, reverse=True)
-        repeat = 1
-        print(f"Najpopularniejsze filmy i seriale dnia {normalna_data}")
+        printing_top_titles(lista, topx, "filmy i seiale")
+    elif content_type == "movies":
+        printing_top_titles(get_movies(lista), topx, "filmy")
+    elif content_type == "series":
+        printing_top_titles(get_series(lista), topx, "seriale")
+
+def printing_top_titles(lista, topx, text):
+        top = sorted(lista, key= lambda video: video.views, reverse=True)
+        top = top[0:topx]
+        print(f"Najpopularniejsze {text} {normalna_data}")
+        place = 1
         for rank_video in top:
-            print(f"{repeat}. {rank_video}")
-            if repeat == topx:
-                break
-            repeat += 1
-    elif content_type == "Movies":
-        top = sorted(get_movies(lista), key=lambda video: video.views, reverse=True)
-        repeat = 1
-        print(f"Najpopularniejsze filmy i seriale dnia {normalna_data}")
-        for rank_video in top:
-            print(f"{repeat}. {rank_video}")
-            if repeat == topx:
-                break
-            repeat += 1
-    elif content_type == "Series":
-        top = sorted(get_series(lista), key=lambda video: video.views, reverse=True)
-        repeat = 1
-        print(f"Najpopularniejsze filmy i seriale dnia {normalna_data}")
-        for rank_video in top:
-            print(f"{repeat}. {rank_video}")
-            if repeat == topx:
-                break
-            repeat += 1
+            print(f"{place}. {rank_video}")
+            place += 1
 
 
 def add_season(n_episodes, season, title, year, genre, lista):
@@ -119,11 +107,13 @@ if __name__ == "__main__":
     today = date.today()
     normalna_data = f"{str(today.day).zfill(2)}.{str(today.month).zfill(2)}.{today.year}"
     print("Biblioteka filmów")
-    library = add_season(12, 1, "Fairy Tail", 2009, "Fantasy", library)
-    library = add_season(12, 2, "Fairy Tail", 2010, "Fantasy", library)
-    library = add_season(8, 1, "Black Rock Shooter", 2010, "Thriller", library)
+    library = add_season(2, 1, "Fairy Tail", 2009, "Fantasy", library)
+    library = add_season(2, 2, "Fairy Tail", 2010, "Fantasy", library)
+    library = add_season(2, 1, "Black Rock Shooter", 2010, "Thriller", library)
     library.append(Movie("Avatar", 2009, "Sci-Fi"))
     library.append(Movie("Avatar 2", 2022, "Sci-Fi"))
+    library.append(Movie("Kim", 2022, "Sci-Fi"))
+    library.append(Movie("ZZ", 2022, "Sci-Fi"))
+    library.append(Movie("BB", 2022, "Sci-Fi"))
     magic_function(library)
-    top_titles(library, 3)
-    
+    top_titles(library, 1, "series")
